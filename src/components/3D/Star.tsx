@@ -69,8 +69,6 @@ const LowPolyStar: React.FC<LowPolyStarProps> = ({
     );
   }, [path]);
 
-  const speed = 0.5;
-
   useFrame(() => {
     if (ref.current) {
     //   ref.current.rotation.y += speed * 0.05;
