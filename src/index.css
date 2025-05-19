@@ -1,1 +1,55 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "MadouFutoMaruGothic";
+  src: url("../fonts/MadouFutoMaruGothic-d9Xo7.ttf");
+}
+
+@font-face {
+  font-family: "Wasted-Vindey";
+  src: url("../fonts/Wasted-Vindey.ttf");
+}
+
+@font-face {
+  font-family: "PunkKid";
+  src: url("../fonts/PunkKid.ttf");
+}
+
+@font-face {
+  font-family: "8blimro";
+  src: url("../fonts/8blimro.ttf");
+}
+
+@font-face {
+  font-family: "TimesNewRoman";
+  src: url("../fonts/TimesNewRoman.ttf");
+}
+
+.font-punk {
+  font-family: "PunkKid";
+}
+
+.font-madou {
+  font-family: "MadouFutoMaruGothic";
+}
+
+.font-wasted {
+  font-family: "Wasted-Vindey";
+}
+
+.font-blimro {
+  font-family: "8blimro";
+}
+
+.font-times {
+  font-family: "TimesNewRoman";
+}
+
+.glowing-text {
+  text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 0 0 20px #ff0000,
+    0 0 40px #ff0000;
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+}
