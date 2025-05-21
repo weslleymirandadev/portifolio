@@ -1,86 +1,82 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 
-// Interface para as props do componente
 interface LowPolyStarProps {
   position?: [number, number, number];
   scale?: number;
   rotation?: [number, number, number];
   speed?: number;
+  color: THREE.Color;
   path?: string;
 }
 
-// Componente LowPolyStar
 const LowPolyStar: React.FC<LowPolyStarProps> = ({
   position = [0, 0, 0],
-  scale = 0.025,
+  scale = 0.025, // Increased scale for better visibility
   rotation = [0, 0, 0],
-  path = "src/components/3D/models/star/star.glb", // Ajustado para caminho relativo à raiz
+  speed = 0.05,
+  color = new THREE.Color(0x00ff00),
+  path = "src/components/3D/models/star/star.glb",
 }) => {
   const [model, setModel] = useState<THREE.Group | null>(null);
-  const ref = useRef<THREE.Group>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const materialRef = useRef<THREE.MeshStandardMaterial>(
+    new THREE.MeshStandardMaterial({
+      color: color,
+      emissive: color,
+      emissiveIntensity: 10,
+      roughness: 0.2,
+      metalness: 0.8,
+      toneMapped: false,
+      wireframe: true,
+    })
+  );
 
-  // Carregar o modelo GLTF com depuração
   useEffect(() => {
     const loader = new GLTFLoader();
-    console.log("Tentando carregar o modelo de:", path);
-
     loader.load(
       path,
-      (gltf: { scene: any }) => {
-        console.log("Modelo carregado com sucesso:", gltf.scene);
+      (gltf) => {
         const scene = gltf.scene;
-        scene.traverse((child: any) => {
+        scene.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             child.castShadow = true;
             child.receiveShadow = true;
-            console.log(
-              "Mesh encontrado:",
-              child.name,
-              "Geometria:",
-              child.geometry,
-              "Material:",
-              child.material
-            );
-
-            // Substituir o material por wireframe verde
-            child.material = new THREE.MeshStandardMaterial({
-              color: 0x05df72, // vermelho sólido
-              emissive: 0x05df72, // brilho amarelo
-              emissiveIntensity: 10,
-              roughness: 0.2,
-              metalness: 0.8,
-              toneMapped: false,
-              wireframe: true,
-            });
+            child.material = materialRef.current; // Apply shared material
           }
         });
-
         setModel(scene);
       },
-      (progress: any) => {
-        console.log("Progresso do carregamento:", progress);
-      },
-      (error: any) => {
-        console.error("Erro ao carregar o modelo GLTF:", error);
+      undefined,
+      (error) => {
+        console.error("Error loading GLTF model:", error);
       }
     );
   }, [path]);
 
+  useEffect(() => {
+    // Update material properties when color changes
+    materialRef.current.color.set(color);
+    materialRef.current.emissive.set(color);
+  }, [color]);
+
   useFrame(() => {
-    if (ref.current) {
-    //   ref.current.rotation.y += speed * 0.05;
+    if (groupRef.current) {
+      groupRef.current.rotation.y += speed;
     }
   });
 
   return model ? (
-    <group ref={ref} position={position} scale={scale} rotation={rotation}>
+    <group ref={groupRef} position={position} scale={scale} rotation={rotation}>
       <primitive object={model} />
     </group>
   ) : (
-    <mesh visible={false}>Carregando...</mesh>
+    <mesh visible={false}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="green" />
+    </mesh>
   );
 };
 
