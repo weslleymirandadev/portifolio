@@ -25,6 +25,10 @@
   src: url("../fonts/TimesNewRoman.ttf");
 }
 
+html, body {
+  scroll-behavior: auto;
+}
+
 .font-punk {
   font-family: "PunkKid";
 }
